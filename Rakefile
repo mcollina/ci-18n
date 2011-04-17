@@ -6,9 +6,12 @@ require 'rake/minify'
 
 Rake::Minify.new do
   dir("coffeescripts") do # we specify only the source directory
-    group("build/output.js") do
-      add("Player.coffee") # the coffee file is compiled and minified
-      add("Song.coffee") # the coffee file is compiled and minified
+    group("build/ci-18n.min.js") do
+      add("I18n.coffee")
+    end
+
+    group("build/ci-18n.js") do
+      add("I18n.coffee", :minify => false)
     end
   end
 end
