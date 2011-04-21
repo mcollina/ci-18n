@@ -33,7 +33,7 @@ I18n.normalizeKeys = (keywords = [], options = { scope: [] }) ->
 I18n.interpolate = (string, options = {}) ->
   return string if not string?
   for option, value of options
-    string = string.replace("%{#{option}}", value)
+    string = string.replace(///%{#{option}}///g, value)
   string
 
 

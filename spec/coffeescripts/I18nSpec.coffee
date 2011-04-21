@@ -115,3 +115,5 @@ describe "I18n.interpolate", ->
   it "should return the string with two placeholders replaced", ->
     expect(@instance("%{a} %{b}", a: "hello", b: "world")).toEqual("hello world")
 
+  it "should interpolate the same placeholder twice", ->
+    expect(@instance("%{a} %{a}", a: "hello")).toEqual("hello hello")
