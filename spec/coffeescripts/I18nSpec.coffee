@@ -23,7 +23,7 @@ describe "I18n#t", ->
     @instance.default = { keyword: "ahaha" }
     expect(@instance.t("keyword")).toEqual("ahaha")
 
-  it "should be able to translate complex keywords", ->
+  it "should be able to translate complex keyword", ->
     @instance.locale = { a: { keyword: "bbbb" } }
     expect(@instance.t("a.keyword")).toEqual("bbbb")
 
@@ -47,6 +47,10 @@ describe "I18n#t", ->
   it "should call I18n.normalizeKeys", ->
     spyOn(I18n, "normalizeKeys").andCallThrough()
     @instance.t("something")
+
+  it "should be able to translate complex keyword using a scope", ->
+    @instance.locale = { a: { keyword: "bbbb" } }
+    expect(@instance.t("keyword", scope: "a")).toEqual("bbbb")
 
 describe "I18n.normalizeKeys", ->
 

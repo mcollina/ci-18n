@@ -13,8 +13,8 @@ class I18n
       locale = locale[keyword] 
     locale
 
-  translate: (keywordList) ->
-    keywordList = I18n.normalizeKeys(keywordList)
+  translate: (keywordList, options) ->
+    keywordList = I18n.normalizeKeys(keywordList, options)
     innerLookup(@locale, keywordList) || innerLookup(@default, keywordList)
 
   t: this::translate # coffeescript syntax to alias a method
