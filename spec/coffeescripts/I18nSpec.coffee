@@ -1,5 +1,5 @@
 
-describe "I18n", ->
+describe "I18n#t", ->
 
   beforeEach ->
     @instance = new I18n()
@@ -44,5 +44,29 @@ describe "I18n", ->
   it "should return undefined if it doesn't find a translation", ->
     expect(@instance.t("something")).toBeUndefined
 
+  it "should call I18n.normalizeKeys", ->
+    spyOn(I18n, "normalizeKeys").andCallThrough()
+    @instance.t("something")
 
+describe "I18n.normalizeKeys", ->
 
+  beforeEach ->
+    @instance = I18n.normalizeKeys
+
+  it "should return an array containing a single value if there are no dots", ->
+    expect(@instance("hello")).toEqual(["hello"])
+
+  it "should extract a simple dot-separated keyword list", ->
+    expect(@instance("hello.world")).toEqual(["hello", "world"])
+
+  it "should extract a simple dot-separated keyword list", ->
+    expect(@instance("hello.world")).toEqual(["hello", "world"])
+
+  it "should return an array if an array was passed", ->
+    expect(@instance(["hello", "world"])).toEqual(["hello", "world"])
+
+  it "should remove empty keywords", ->
+    expect(@instance("hello......world")).toEqual(["hello", "world"])
+
+  it "should accept a scope", ->
+    expect(@instance("hello.world", { scope: "foo.bar" })).toEqual(["foo", "bar", "hello", "world"])
