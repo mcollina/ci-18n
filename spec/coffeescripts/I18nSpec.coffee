@@ -47,10 +47,24 @@ describe "I18n#t", ->
   it "should call I18n.normalizeKeys", ->
     spyOn(I18n, "normalizeKeys").andCallThrough()
     @instance.t("something")
+    expect(I18n.normalizeKeys).toHaveBeenCalled()
 
   it "should be able to translate complex keyword using a scope", ->
     @instance.locale = { a: { keyword: "bbbb" } }
     expect(@instance.t("keyword", scope: "a")).toEqual("bbbb")
+
+  it "should call I18n.interpolate", ->
+    spyOn(I18n, "interpolate").andCallThrough()
+    @instance.t("something")
+    expect(I18n.interpolate).toHaveBeenCalled()
+
+  it "should interpolate with a scope", ->
+    @instance.locale = { a: { keyword: "%{something}" } }
+    expect(@instance.t("keyword", scope: "a", something: "bbbb")).toEqual("bbbb")
+
+  it "should interpolate without a scope", ->
+    @instance.locale = { a: "%{something}" } 
+    expect(@instance.t("a", something: "bbbb")).toEqual("bbbb")
 
 describe "I18n.normalizeKeys", ->
 
@@ -66,6 +80,9 @@ describe "I18n.normalizeKeys", ->
   it "should extract a simple dot-separated keyword list", ->
     expect(@instance("hello.world")).toEqual(["hello", "world"])
 
+  it "should extract a simple dot-separated keyword list even with options with no scope", ->
+    expect(@instance("hello.world", {})).toEqual(["hello", "world"])
+
   it "should return an array if an array was passed", ->
     expect(@instance(["hello", "world"])).toEqual(["hello", "world"])
 
@@ -74,3 +91,27 @@ describe "I18n.normalizeKeys", ->
 
   it "should accept a scope", ->
     expect(@instance("hello.world", { scope: "foo.bar" })).toEqual(["foo", "bar", "hello", "world"])
+
+describe "I18n.interpolate", ->
+
+  beforeEach ->
+    @instance = I18n.interpolate
+
+  it "should work with undefined", ->
+    expect(@instance(undefined)).toEqual(undefined)
+
+  it "should work with null", ->
+    expect(@instance(null)).toEqual(null)
+
+  it "should work with the empty string", ->
+    expect(@instance("")).toEqual("")
+
+  it "should return the passed string if there is no placeholder", ->
+    expect(@instance("hello world")).toEqual("hello world")
+
+  it "should return the string with the placeholder replaced", ->
+    expect(@instance("%{hello}", hello: "world")).toEqual("world")
+
+  it "should return the string with two placeholders replaced", ->
+    expect(@instance("%{a} %{b}", a: "hello", b: "world")).toEqual("hello world")
+
