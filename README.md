@@ -28,6 +28,10 @@ the command:
 
     guard
 
+To build everything, hit 
+
+    CTRL-\
+
 To run the specs in the browser, launch the command
 
     rake jasmine
