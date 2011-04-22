@@ -15,6 +15,7 @@ class I18n
 
   translate: (keywordList, options) ->
     keywordList = I18n.normalizeKeys(keywordList, options)
+    delete options.scope if options?
     lookup = innerLookup(@locale, keywordList) || innerLookup(@default, keywordList)
     I18n.interpolate(lookup, options)
 
@@ -33,7 +34,10 @@ I18n.normalizeKeys = (keywords = [], options = { scope: [] }) ->
 I18n.interpolate = (string, options = {}) ->
   return string if not string?
   for option, value of options
-    string = string.replace(///%{#{option}}///g, value)
+    regexp = ///%{#{option}}///g
+    unless regexp.test(string)
+      throw new Error("Missing placeholder for keyword \"#{option}\"") 
+    string = string.replace(regexp, value)
   string
 
 

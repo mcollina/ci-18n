@@ -117,3 +117,10 @@ describe "I18n.interpolate", ->
 
   it "should interpolate the same placeholder twice", ->
     expect(@instance("%{a} %{a}", a: "hello")).toEqual("hello hello")
+
+  it "should raise an exception if a passed keyword didn't match", ->
+    func = @instance
+    expect( ->
+      func("%{a}", a: "hello", b: "something")
+    ).toThrow(new Error("Missing placeholder for keyword \"b\""))
+
