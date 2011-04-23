@@ -13,10 +13,18 @@ class I18n
       locale = locale[keyword] 
     locale
 
-  translate: (keywordList, options) ->
+  translate: (keywordList, options = {}) ->
     keywordList = I18n.normalizeKeys(keywordList, options)
-    delete options.scope if options?
-    lookup = innerLookup(@locale, keywordList) || innerLookup(@default, keywordList)
+    lookup = innerLookup(@locale, keywordList) || options.default || innerLookup(@default, keywordList)
+
+    # the scope is used by normalizeKeys, but it will be 
+    # interpreted as a keyword placeholder by I18n.interpolate
+    delete options.scope 
+
+    # the default is used here, but it will be interpreted 
+    # as a keyword placeholder by I18n.interpolate
+    delete options.default 
+
     I18n.interpolate(lookup, options)
 
   t: this::translate # coffeescript syntax to alias a method

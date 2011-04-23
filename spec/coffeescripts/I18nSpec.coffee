@@ -66,6 +66,13 @@ describe "I18n#t", ->
     @instance.locale = { a: "%{something}" } 
     expect(@instance.t("a", something: "bbbb")).toEqual("bbbb")
 
+  it "should allow to specify a default for the current call", ->
+    expect(@instance.t("a", default: "bbbb")).toEqual("bbbb")
+
+  it "should work correctly even if a default was specified", ->
+    @instance.locale = { a: "%{something}" } 
+    expect(@instance.t("a", something: "bbbb", default: "aaaaa")).toEqual("bbbb")
+
 describe "I18n.normalizeKeys", ->
 
   beforeEach ->
