@@ -33,14 +33,10 @@ I18n.normalizeKeys = (keywords = [], options = { scope: [] }) ->
 
 # interpolate function wrapper
 ( ->
-
-  abstract_interpolate = (string, regexp, value) ->
-    new_string = string.replace(regexp, value)
+  interpolate_basic = (string, option, value) ->
+    new_string = string.replace(///%{#{option}}///g, value)
     return undefined if string == new_string
     new_string
-
-  interpolate_basic = (string, option, value) ->
-    abstract_interpolate(string, ///%{#{option}}///g, value)
 
   interpolate_sprintf = (string, option, value) ->
     # this regexp was taken from https://github.com/svenfuchs/i18n/blob/master/lib/i18n/interpolate/ruby.rb
@@ -49,14 +45,13 @@ I18n.normalizeKeys = (keywords = [], options = { scope: [] }) ->
     return undefined unless match?
 
     result = sprintf("%(keyword)#{match[1]}", keyword: value)
-    abstract_interpolate(string, match[0], result)
+    string.replace(match[0], result)
 
   I18n.interpolate = (string, options = {}) ->
     return string if not string?
     for option, value of options
       new_string = interpolate_basic(string, option, value)
-      unless new_string?
-        new_string = interpolate_sprintf(string, option, value)
+      new_string ||= interpolate_sprintf(string, option, value)
       unless new_string?
         throw new Error("Missing placeholder for keyword \"#{option}\"") 
       string = new_string
