@@ -31,13 +31,36 @@ I18n.normalizeKeys = (keywords = [], options = { scope: [] }) ->
     splitted_keywords.push(keyword) if keyword? and keyword != ''
   I18n.normalizeKeys(options.scope).concat(splitted_keywords)
 
-I18n.interpolate = (string, options = {}) ->
-  return string if not string?
-  for option, value of options
-    regexp = ///%{#{option}}///g
-    unless regexp.test(string)
-      throw new Error("Missing placeholder for keyword \"#{option}\"") 
-    string = string.replace(regexp, value)
-  string
+# interpolate function wrapper
+( ->
+
+  abstract_interpolate = (string, regexp, value) ->
+    new_string = string.replace(regexp, value)
+    return undefined if string == new_string
+    new_string
+
+  interpolate_basic = (string, option, value) ->
+    abstract_interpolate(string, ///%{#{option}}///g, value)
+
+  interpolate_sprintf = (string, option, value) ->
+    # this regexp was taken from https://github.com/svenfuchs/i18n/blob/master/lib/i18n/interpolate/ruby.rb
+    regexp = ///%<#{option}>(.*?\d*\.?\d*[bBdiouxXeEfgGcps])///  # matches placeholders like "%<foo>.d"
+    match = string.match(regexp)
+    return undefined unless match?
+
+    result = sprintf("%(keyword)#{match[1]}", keyword: value)
+    abstract_interpolate(string, match[0], result)
+
+  I18n.interpolate = (string, options = {}) ->
+    return string if not string?
+    for option, value of options
+      new_string = interpolate_basic(string, option, value)
+      unless new_string?
+        new_string = interpolate_sprintf(string, option, value)
+      unless new_string?
+        throw new Error("Missing placeholder for keyword \"#{option}\"") 
+      string = new_string
+    string
+)()
 
 

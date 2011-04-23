@@ -124,3 +124,5 @@ describe "I18n.interpolate", ->
       func("%{a}", a: "hello", b: "something")
     ).toThrow(new Error("Missing placeholder for keyword \"b\""))
 
+  it "should interpolate named placeholders with sprintf syntax", ->
+    expect(@instance("%<integer>d, %<float>.1f", integer: 10, float: 42.42)).toEqual("10, 42.4")

@@ -12,6 +12,7 @@
 #
 src_files:
     - build/compiled/**/*.js
+    - javascripts/**/*.js
 
 # stylesheets
 #
