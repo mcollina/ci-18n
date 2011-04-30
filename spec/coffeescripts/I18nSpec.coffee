@@ -133,3 +133,75 @@ describe "I18n.interpolate", ->
 
   it "should interpolate named placeholders with sprintf syntax", ->
     expect(@instance("%<integer>d, %<float>.1f", integer: 10, float: 42.42)).toEqual("10, 42.4")
+
+describe "I18n#localize", ->
+
+  beforeEach ->
+    @date = new Date(2008, 02, 01)
+    @instance = new I18n()
+    #taken directly from https://github.com/svenfuchs/i18n/blob/master/lib/i18n/tests/localization/date.rb
+    @instance.locale = {
+      date : {
+        formats : {
+          default : "%d.%m.%Y",
+          short : "%d. %b",
+          long : "%d. %B %Y",
+        },
+        day_names: ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
+        abbr_day_names: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"], 
+        month_names: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember", null], 
+        abbr_month_names:["Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"]
+      }
+    } 
+
+  it "should localize Date: given the short format it uses it", ->
+    # should be Mrz, shouldn't it?
+    expect(@instance.l(@date, format: "short")).toEqual("01. Mar")
+
+  it "should alias localize to l", ->
+    expect(@instance.l).toEqual(@instance.localize)
+
+  it "should localize Date: given the long format it uses it", ->
+    expect(@instance.l(@date, format: "long")).toEqual('01. März 2008')
+
+  it "should localize Date: given the default format it uses it", ->
+    expect(@instance.l(@date, format: "default")).toEqual('01.03.2008')
+
+  it "should localize Date: given a day name format it returns the correct day name", ->
+    expect(@instance.l(@date, format: '%A')).toEqual('Samstag')
+
+  it "should localize Date: given an abbreviated day name format it returns the correct abbreviated day name", ->
+    expect(@instance.l(@date, format: '%a')).toEqual('Sa')
+
+  it "should localize Date: given a month name format it returns the correct month name", ->
+    expect(@instance.l(@date, format: '%B')).toEqual('März')
+
+  it "should localize Date: given an abbreviated month name format it returns the correct abbreviated month name", ->
+    # TODO should be Mrz, shouldn't it?
+    expect(@instance.l(@date, format: '%b')).toEqual('Mar')
+
+  it "should localize Date: given an unknown format it does not fail", ->
+    expect(@instance.l(@date, format: '%x')).toEqual('%x') # really I don't know what we should return
+
+  it "should localize Date: given null it raises an error", ->
+    that = this
+    expect(-> that.instance.l(null)).toThrow("Argument Error: null is not localizable")
+
+  it "should localize Date: given undefined it raises an error", ->
+    that = this
+    expect(-> that.instance.l(undefined)).toThrow("Argument Error: undefined is not localizable")
+
+  it "should localize Date: given a plain Object it raises an error", ->
+    that = this
+    expect(-> that.instance.l({})).toThrow("Argument Error: [object Object] is not localizable")
+
+  it "should localize Date: given a format is missing it raises I18n::MissingTranslationData", ->
+    that = this
+    expect(-> that.instance.l(that.date, format: "missing")).toThrow("Argument Error: no such format")
+
+  it "should localize Date: it does not alter the format string", ->
+    expect(@instance.l(new Date(2009, 01, 01), format: "long")).toEqual('01. Februar 2009')
+    expect(@instance.l(new Date(2009, 9, 1), format: "long")).toEqual('01. Oktober 2009')
+
+  it "should localize a no date, but pass the % sign", ->
+    expect(@instance.l(@date, format: '%%')).toEqual('%')

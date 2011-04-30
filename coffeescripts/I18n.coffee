@@ -27,7 +27,21 @@ class I18n
 
     I18n.interpolate(lookup, options)
 
+  localize: (date, options) ->
+    throw "Argument Error: #{date} is not localizable" unless date instanceof Date
+    regexp = /%([a-z]|%)/ig
+    string = this.translate("date.formats." + options.format) || options.format
+    matches = string.match(regexp)
+    throw "Argument Error: no such format" unless matches?
+
+    for match in matches
+      match = match.slice(-1)
+      replacement_builder = I18n.strftime[match]
+      string = string.replace("%#{match}", replacement_builder(date, this)) if replacement_builder?
+    string
+
   t: this::translate # coffeescript syntax to alias a method
+  l: this::localize # coffeescript syntax to alias a method
 
 # extract an array of keys from the dot separated string
 I18n.normalizeKeys = (keywords = [], options = { scope: [] }) ->
@@ -66,4 +80,27 @@ I18n.normalizeKeys = (keywords = [], options = { scope: [] }) ->
     string
 )()
 
+I18n.strftime = {
+  'd': (date) ->
+    ('0' + date.getDate()).slice(-2)
 
+  'b': (date, i18n) ->
+    i18n.t("date.abbr_month_names")[date.getMonth()]
+
+  'B': (date, i18n) ->
+    i18n.t("date.month_names")[date.getMonth()]
+
+  'a': (date, i18n) ->
+    i18n.t("date.abbr_day_names")[date.getDay()]
+
+  'A': (date, i18n) ->
+    i18n.t("date.day_names")[date.getDay()]
+
+  'Y': (date) ->
+    date.getFullYear()
+
+  'm': (date) ->
+    ('0'+(date.getMonth() + 1)).slice(-2)
+
+  '%': -> '%'
+}
