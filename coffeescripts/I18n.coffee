@@ -30,7 +30,9 @@ class I18n
   localize: (date, options) ->
     throw "Argument Error: #{date} is not localizable" unless date instanceof Date
     regexp = /%([a-z]|%)/ig
-    string = this.translate("date.formats." + options.format) || options.format
+    throw "Argument Error: missing type" unless options.type?
+    options.type = "time" if options.type == "datetime"
+    string = this.translate("#{options.type}.formats.#{options.format}") || options.format
     matches = string.match(regexp)
     throw "Argument Error: no such format" unless matches?
 
@@ -101,6 +103,22 @@ I18n.strftime = {
 
   'm': (date) ->
     ('0'+(date.getMonth() + 1)).slice(-2)
+
+  'H': (date) ->
+    ('0'+(date.getHours() + 1)).slice(-2)
+
+  'M': (date) ->
+    ('0'+(date.getMinutes())).slice(-2)
+
+  'S': (date) ->
+    ('0'+(date.getSeconds())).slice(-2)
+
+  'z': (date) ->
+    tz_offset = date.getTimezoneOffset()
+    (tz_offset > 0 and '-' or '+') + ('0' + (tz_offset / 60)).slice(-2) + ('0' + (tz_offset % 60)).slice(-2)
+
+  'p': (date, i18n) ->
+    i18n.t("time")[date.getHours() >= 12 and 'pm' or 'am']
 
   '%': -> '%'
 }
