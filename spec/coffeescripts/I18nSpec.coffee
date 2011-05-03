@@ -138,7 +138,7 @@ describe "I18n#localize", ->
 
   beforeEach ->
     @date = new Date(2008, 2, 1)
-    @datetime = new Date(2008, 2, 1, 5) 
+    @datetime = new Date(2008, 2, 1, 6) 
     @instance = new I18n()
     #taken directly from https://github.com/svenfuchs/i18n/blob/master/lib/i18n/tests/localization/date.rb
     @instance.locale = {
@@ -243,3 +243,36 @@ describe "I18n#localize", ->
 
   it "should localize datetime: given a a pm date it returns the corrent meridian indicator", ->
     expect(@instance.l(new Date(2008, 1, 1, 20, 20), format: "%p", type: "datetime")).toEqual('pm')
+
+  it "should localize datetime: given a day format it returns the correct day", ->
+    expect(@instance.l(@datetime, format: "%e", type: "datetime")).toEqual('1')
+
+  it "should localize datetime: given an hour padded format it returns the correct hour", ->
+    expect(@instance.l(@datetime, format: "%I", type: "datetime")).toEqual('06')
+
+  it "should localize datetime: given an hour padded format (pm) it returns the correct hour", ->
+    expect(@instance.l(new Date(2008, 1, 1, 20, 20), format: "%I", type: "datetime")).toEqual('08')
+
+  it "should localize datetime: given a day_of_year format (first day) it returns the correct day", ->
+    expect(@instance.l(new Date(2008, 0, 1, 20, 20), format: "%j", type: "datetime")).toEqual('1')
+
+  it "should localize datetime: given a day_of_year format (last day) it returns the correct day", ->
+    expect(@instance.l(new Date(2008, 11, 31, 20, 20), format: "%j", type: "datetime")).toEqual('366')
+
+  it "should localize datetime: given a 24 hour format it returns the correct hour not padded", ->
+    expect(@instance.l(new Date(2008, 11, 31, 6, 20), format: "%k", type: "datetime")).toEqual('6')
+
+  it "should localize datetime: given a 24 hour format it returns the correct hour not padded", ->
+    expect(@instance.l(new Date(2008, 11, 31, 20, 20), format: "%k", type: "datetime")).toEqual('20')
+
+  it "should localize datetime: given a 12 hour format it returns the correct hour not padded", ->
+    expect(@instance.l(new Date(2008, 11, 31, 20, 20), format: "%l", type: "datetime")).toEqual('8')
+
+  it "should localize datetime: given a 12 hour format it returns the correct hour not padded", ->
+    expect(@instance.l(new Date(2008, 11, 31, 20, 20), format: "%l", type: "datetime")).toEqual('8')
+
+  it "should localize datetime: given a week day format it returns the correct week day", ->
+    expect(@instance.l(new Date(2008, 11, 31, 20, 20), format: "%w", type: "datetime")).toEqual('3')
+
+  it "should localize datetime: given a abbr year format it returns the correct year", ->
+    expect(@instance.l(new Date(2008, 11, 31, 20, 20), format: "%y", type: "datetime")).toEqual('08')

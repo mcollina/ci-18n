@@ -105,7 +105,7 @@ I18n.strftime = {
     ('0'+(date.getMonth() + 1)).slice(-2)
 
   'H': (date) ->
-    ('0'+(date.getHours() + 1)).slice(-2)
+    ('0'+(date.getHours())).slice(-2)
 
   'M': (date) ->
     ('0'+(date.getMinutes())).slice(-2)
@@ -119,6 +119,27 @@ I18n.strftime = {
 
   'p': (date, i18n) ->
     i18n.t("time")[date.getHours() >= 12 and 'pm' or 'am']
+
+  'e': (date) ->
+    date.getDate()
+
+  'I': (date) ->
+    ('0'+(date.getHours() % 12)).slice(-2)
+
+  'j': (date) ->
+    (((date.getTime() - new Date("Jan 1 " + date.getFullYear()).getTime()) / (1000 * 60 * 60 * 24) + 1) + '').split(/\./)[0]
+
+  'k': (date) ->
+    date.getHours()
+
+  'l': (date) ->
+    date.getHours() % 12
+
+  'w': (date) ->
+    date.getDay()
+
+  'y': (date) ->
+    "#{date.getYear()}".slice(-2)
 
   '%': -> '%'
 }
