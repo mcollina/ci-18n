@@ -176,12 +176,6 @@ describe "I18n#localize", ->
   it "should raise an error if given a plain object", ->
     expect(=> @instance.l({})).toThrow("Argument Error: [object Object] is not localizable")
 
-  it "should given no type it raises an error", ->
-    expect(=> @instance.l(@date, format: '%a')).toThrow("Argument Error: missing type")
-
-  it "should localize a no date, but pass the % sign", ->
-    expect(@instance.l(@date, type: "date", format: '%%')).toEqual('%')
-
   it "should localize date: given the short format it uses it", ->
     # should be Mrz, shouldn't it?
     expect(@instance.l(@date, type: "date", format: "short")).toEqual("01. Mar")
@@ -191,22 +185,6 @@ describe "I18n#localize", ->
 
   it "should localize date: given the default format it uses it", ->
     expect(@instance.l(@date, type: "date", format: "default")).toEqual('01.03.2008')
-
-  it "should localize date: given a day name format it returns the correct day name", ->
-    expect(@instance.l(@date, type: "date", format: '%A')).toEqual('Samstag')
-
-  it "should localize date: given an abbreviated day name format it returns the correct abbreviated day name", ->
-    expect(@instance.l(@date, type: "date", format: '%a')).toEqual('Sa')
-
-  it "should localize date: given a month name format it returns the correct month name", ->
-    expect(@instance.l(@date, type: "date", format: '%B')).toEqual('März')
-
-  it "should localize date: given an abbreviated month name format it returns the correct abbreviated month name", ->
-    # TODO should be Mrz, shouldn't it?
-    expect(@instance.l(@date, type: "date", format: '%b')).toEqual('Mar')
-
-  it "should localize date: given an unknown format it does not fail", ->
-    expect(@instance.l(@date, type: "date", format: '%x')).toEqual('%x') # really I don't know what we should return
 
   it "should localize date: given a format is missing it raises I18n::MissingTranslationData", ->
     expect(=> @instance.l(@date, type: "date", format: "missing")).toThrow("Argument Error: no such format")
@@ -226,53 +204,72 @@ describe "I18n#localize", ->
     spyOn(@datetime, "getTimezoneOffset").andReturn(0)
     expect(@instance.l(@datetime, format: "default", type: "datetime")).toEqual('Sa, 01. Mar 2008 06:00:00 +0000')
 
-  it "should localize datetime: given a day name format it returns the correct day name", ->
-    expect(@instance.l(@datetime, format: "%A", type: "datetime")).toEqual('Samstag')
+  it "should the % sign", ->
+    expect(@instance.l(@date, format: '%%')).toEqual('%')
 
-  it "should localize datetime: given an abbreviated day name format it returns the correct abbreviated day name", ->
-    expect(@instance.l(@datetime, format: "%a", type: "datetime")).toEqual('Sa')
+  it "should localize format: given a day name format it returns the correct day name", ->
+    expect(@instance.l(@date, format: '%A')).toEqual('Samstag')
 
-  it "should localize datetime: given a month name format it returns the correct month name", ->
-    expect(@instance.l(@datetime, format: "%B", type: "datetime")).toEqual('März')
+  it "should localize format: given an abbreviated day name format it returns the correct abbreviated day name", ->
+    expect(@instance.l(@date, format: '%a')).toEqual('Sa')
 
-  it "should localize datetime: given an abbreviated month name format it returns the correct abbreviated month name", ->
-    expect(@instance.l(@datetime, format: "%b", type: "datetime")).toEqual('Mar')
+  it "should localize format: given a month name format it returns the correct month name", ->
+    expect(@instance.l(@date, format: '%B')).toEqual('März')
 
-  it "should localize datetime: given a an am date it returns the corrent meridian indicator", ->
-    expect(@instance.l(@datetime, format: "%p", type: "datetime")).toEqual('am')
+  it "should localize format: given an abbreviated month name format it returns the correct abbreviated month name", ->
+    # TODO should be Mrz, shouldn't it?
+    expect(@instance.l(@date, format: '%b')).toEqual('Mar')
 
-  it "should localize datetime: given a a pm date it returns the corrent meridian indicator", ->
-    expect(@instance.l(new Date(2008, 1, 1, 20, 20), format: "%p", type: "datetime")).toEqual('pm')
+  it "should localize format: given an unknown format it does not fail", ->
+    expect(@instance.l(@date, format: '%x')).toEqual('%x') # really I don't know what we should return
 
-  it "should localize datetime: given a day format it returns the correct day", ->
-    expect(@instance.l(@datetime, format: "%e", type: "datetime")).toEqual('1')
+  it "should localize format: given a day name format it returns the correct day name", ->
+    expect(@instance.l(@datetime, format: "%A")).toEqual('Samstag')
 
-  it "should localize datetime: given an hour padded format it returns the correct hour", ->
-    expect(@instance.l(@datetime, format: "%I", type: "datetime")).toEqual('06')
+  it "should localize format: given an abbreviated day name format it returns the correct abbreviated day name", ->
+    expect(@instance.l(@datetime, format: "%a")).toEqual('Sa')
 
-  it "should localize datetime: given an hour padded format (pm) it returns the correct hour", ->
-    expect(@instance.l(new Date(2008, 1, 1, 20, 20), format: "%I", type: "datetime")).toEqual('08')
+  it "should localize format: given a month name format it returns the correct month name", ->
+    expect(@instance.l(@datetime, format: "%B")).toEqual('März')
 
-  it "should localize datetime: given a day_of_year format (first day) it returns the correct day", ->
-    expect(@instance.l(new Date(2008, 0, 1, 20, 20), format: "%j", type: "datetime")).toEqual('1')
+  it "should localize format: given an abbreviated month name format it returns the correct abbreviated month name", ->
+    expect(@instance.l(@datetime, format: "%b")).toEqual('Mar')
 
-  it "should localize datetime: given a day_of_year format (last day) it returns the correct day", ->
-    expect(@instance.l(new Date(2008, 11, 31, 20, 20), format: "%j", type: "datetime")).toEqual('366')
+  it "should localize format: given a an am date it returns the corrent meridian indicator", ->
+    expect(@instance.l(@datetime, format: "%p")).toEqual('am')
 
-  it "should localize datetime: given a 24 hour format it returns the correct hour not padded", ->
-    expect(@instance.l(new Date(2008, 11, 31, 6, 20), format: "%k", type: "datetime")).toEqual('6')
+  it "should localize format: given a a pm date it returns the corrent meridian indicator", ->
+    expect(@instance.l(new Date(2008, 1, 1, 20, 20), format: "%p")).toEqual('pm')
 
-  it "should localize datetime: given a 24 hour format it returns the correct hour not padded", ->
-    expect(@instance.l(new Date(2008, 11, 31, 20, 20), format: "%k", type: "datetime")).toEqual('20')
+  it "should localize format: given a day format it returns the correct day", ->
+    expect(@instance.l(@datetime, format: "%e")).toEqual('1')
 
-  it "should localize datetime: given a 12 hour format it returns the correct hour not padded", ->
-    expect(@instance.l(new Date(2008, 11, 31, 20, 20), format: "%l", type: "datetime")).toEqual('8')
+  it "should localize format: given an hour padded format it returns the correct hour", ->
+    expect(@instance.l(@datetime, format: "%I")).toEqual('06')
 
-  it "should localize datetime: given a 12 hour format it returns the correct hour not padded", ->
-    expect(@instance.l(new Date(2008, 11, 31, 20, 20), format: "%l", type: "datetime")).toEqual('8')
+  it "should localize format: given an hour padded format (pm) it returns the correct hour", ->
+    expect(@instance.l(new Date(2008, 1, 1, 20, 20), format: "%I")).toEqual('08')
 
-  it "should localize datetime: given a week day format it returns the correct week day", ->
-    expect(@instance.l(new Date(2008, 11, 31, 20, 20), format: "%w", type: "datetime")).toEqual('3')
+  it "should localize format: given a day_of_year format (first day) it returns the correct day", ->
+    expect(@instance.l(new Date(2008, 0, 1, 20, 20), format: "%j")).toEqual('1')
 
-  it "should localize datetime: given a abbr year format it returns the correct year", ->
-    expect(@instance.l(new Date(2008, 11, 31, 20, 20), format: "%y", type: "datetime")).toEqual('08')
+  it "should localize format: given a day_of_year format (last day) it returns the correct day", ->
+    expect(@instance.l(new Date(2008, 11, 31, 20, 20), format: "%j")).toEqual('366')
+
+  it "should localize format: given a 24 hour format it returns the correct hour not padded", ->
+    expect(@instance.l(new Date(2008, 11, 31, 6, 20), format: "%k")).toEqual('6')
+
+  it "should localize format: given a 24 hour format it returns the correct hour not padded", ->
+    expect(@instance.l(new Date(2008, 11, 31, 20, 20), format: "%k")).toEqual('20')
+
+  it "should localize format: given a 12 hour format it returns the correct hour not padded", ->
+    expect(@instance.l(new Date(2008, 11, 31, 20, 20), format: "%l")).toEqual('8')
+
+  it "should localize format: given a 12 hour format it returns the correct hour not padded", ->
+    expect(@instance.l(new Date(2008, 11, 31, 20, 20), format: "%l")).toEqual('8')
+
+  it "should localize format: given a week day format it returns the correct week day", ->
+    expect(@instance.l(new Date(2008, 11, 31, 20, 20), format: "%w")).toEqual('3')
+
+  it "should localize format: given a abbr year format it returns the correct year", ->
+    expect(@instance.l(new Date(2008, 11, 31, 20, 20), format: "%y")).toEqual('08')

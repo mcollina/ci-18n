@@ -30,10 +30,14 @@ class I18n
   localize: (date, options) ->
     throw "Argument Error: #{date} is not localizable" unless date instanceof Date
     regexp = /%([a-z]|%)/ig
-    throw "Argument Error: missing type" unless options.type?
-    options.type = "time" if options.type == "datetime"
-    string = this.translate("#{options.type}.formats.#{options.format}") || options.format
+    string = options.format
     matches = string.match(regexp)
+    unless matches?
+      throw "Argument Error: missing type" unless options.type?
+      options.type = "time" if options.type == "datetime"
+      string = this.translate("#{options.type}.formats.#{options.format}")
+      matches = string.match(regexp) if string?
+
     throw "Argument Error: no such format" unless matches?
 
     for match in matches
