@@ -1,3 +1,11 @@
+GIT
+  remote: git://github.com/mcollina/rake-minify.git
+  revision: 82451b7ce3186e5e61e4dce97cdc155f4272646c
+  specs:
+    rake-minify (0.2.1)
+      jsmin (~> 1.0.1)
+      rake-minify
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -39,8 +47,6 @@ GEM
     multi_json (1.0.0)
     rack (1.2.2)
     rake (0.8.7)
-    rake-minify (0.2.0)
-      jsmin (~> 1.0.1)
     rb-inotify (0.8.4)
       ffi (>= 0.5.0)
     rspec (2.5.0)
@@ -69,5 +75,5 @@ DEPENDENCIES
   guard-livereload
   jasmine
   libnotify
-  rake-minify
+  rake-minify!
   rb-inotify

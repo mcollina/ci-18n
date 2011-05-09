@@ -147,3 +147,6 @@ I18n.strftime = {
 
   '%': -> '%'
 }
+
+# export I18n object to the world!
+window.I18n = I18n
