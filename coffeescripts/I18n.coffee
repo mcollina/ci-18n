@@ -4,8 +4,8 @@ class I18n
   # the first parameter is the main locale object
   # while the second is the fallback (default)
   constructor: (@locale = {}, @default = {}) ->
-    @locale = I18n.language(@locale) if typeof(@locale) == 'string'
-    @default = I18n.language(@default) if typeof(@default) == 'string'
+    @locale = I18n.language(@locale) if typeof @locale == 'string'
+    @default = I18n.language(@default) if typeof @default == 'string'
 
   # this is a private function
   innerLookup = (locale, keywordList) ->
