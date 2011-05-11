@@ -4,7 +4,8 @@ class I18n
   # the first parameter is the main locale object
   # while the second is the fallback (default)
   constructor: (@locale = {}, @default = {}) ->
-    # nothing to do here
+    @locale = I18n.language(@locale) if typeof(@locale) == 'string'
+    @default = I18n.language(@default) if typeof(@default) == 'string'
 
   # this is a private function
   innerLookup = (locale, keywordList) ->
@@ -147,6 +148,19 @@ I18n.strftime = {
 
   '%': -> '%'
 }
+
+(->
+  languages = {}
+
+  I18n.addLanguage = (name, lang) ->
+    languages[name] = lang
+
+  I18n.clearLanguages = ->
+    languages = {}
+
+  I18n.language = (name) ->
+    languages[name]
+)()
 
 # export I18n object to the world!
 window.I18n = I18n
