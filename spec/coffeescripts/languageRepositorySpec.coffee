@@ -22,3 +22,13 @@ describe "I18n as a language repository", ->
     I18n.addLanguage("it", { hello: "world" })
     instance = new I18n(undefined, "it")
     expect(instance.t("hello")).toEqual("world")
+
+  it "should setup a default language", ->
+    I18n.addLanguage("en", { hello: "world" })
+    I18n.setDefaultLanguage("en")
+    instance = new I18n()
+    expect(instance.t("hello")).toEqual("world")
+
+  it "should get the default language", ->
+    I18n.setDefaultLanguage("en")
+    expect(I18n.getDefaultLanguage()).toEqual("en")
