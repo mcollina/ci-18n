@@ -4,9 +4,8 @@ describe "I18n#localize", ->
   beforeEach ->
     @date = new Date(2008, 2, 1)
     @datetime = new Date(2008, 2, 1, 6) 
-    @instance = new I18n()
     #taken directly from https://github.com/svenfuchs/i18n/blob/master/lib/i18n/tests/localization/date.rb
-    @instance.locale = {
+    @instance = new I18n({
       date: {
         formats: {
           default: "%d.%m.%Y",
@@ -27,7 +26,7 @@ describe "I18n#localize", ->
         am: 'am',
         pm: 'pm'
       }
-    } 
+    })
 
   it "should alias localize to l", ->
     expect(@instance.l).toEqual(@instance.localize)

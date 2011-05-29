@@ -3,33 +3,45 @@ class I18n
 
   # the first parameter is the main locale object
   # while the second is the fallback (default)
-  constructor: (@locale = {}, @default = undefined)->
-    @locale = I18n.language(@locale) if typeof @locale == 'string'
-    if typeof @default == 'string'
-      @default = I18n.language(@default)
-    else if not @default?
-      @default = I18n.language(I18n.getDefaultLanguage())
-    if not @default?
-      @default = {}
+  constructor: (currentLocale = {}, defaultLocale = undefined)->
+    if typeof currentLocale == 'string'
+      @localeString = currentLocale
+    else
+      @localeVal = currentLocale
+
+    if typeof defaultLocale == 'string'
+      @defaultString = defaultLocale
+    else if not defaultLocale?
+      @defaultString = I18n.getDefaultLanguage()
+    else
+      @defaultVal = defaultLocale || {}
+
+  locale: ->
+    @localeVal ||= I18n.language(@localeString)
+
+  defaultLocale: ->
+    @defaultVal ||= I18n.language(@defaultString)
+
 
   # this is a private function
   innerLookup = (locale, keywordList) ->
     for keyword in keywordList
       break unless locale?
-      locale = locale[keyword] 
+      locale = locale[keyword]
     locale
 
   translate: (keywordList, options = {}) ->
     keywordList = I18n.normalizeKeys(keywordList, options)
-    lookup = innerLookup(@locale, keywordList) || options.default || innerLookup(@default, keywordList)
+    console.log(this.locale)
+    lookup = innerLookup(this.locale(), keywordList) || options.default || innerLookup(this.defaultLocale(), keywordList)
 
     # the scope is used by normalizeKeys, but it will be 
     # interpreted as a keyword placeholder by I18n.interpolate
-    delete options.scope 
+    delete options.scope
 
     # the default is used here, but it will be interpreted 
     # as a keyword placeholder by I18n.interpolate
-    delete options.default 
+    delete options.default
 
     I18n.interpolate(lookup, options)
 
@@ -173,6 +185,30 @@ I18n.strftime = {
   I18n.getDefaultLanguage = ->
     defaultLanguage
 )()
+
+I18n.load = (path, lang) ->
+  url = "#{path}/#{lang}.js" # url of the external script
+
+  # dynamic script insertion
+  script = document.createElement('script')
+  script.setAttribute('src', url)
+
+  # load the script
+  document.getElementsByTagName('head')[0].appendChild(script); 
+
+I18n.detectLanguage = (navigator) ->
+  for name in ["language", "browserLanguage"]
+    return navigator[name] if navigator[name]?
+
+I18n.autoloadAndSetup = (options) ->
+  options.language = I18n.detectLanguage(window.navigator) unless options.language?
+  langsToLoad = [options.language]
+  langsToLoad.push(options.default) if options.default?
+
+  for lang in langsToLoad
+    I18n.load(options.path, lang)
+
+  window.$i18n = new I18n(options.language, options.default)
 
 # export I18n object to the world!
 window.I18n = I18n
