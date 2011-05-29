@@ -208,7 +208,10 @@ I18n.autoloadAndSetup = (options) ->
   for lang in langsToLoad
     I18n.load(options.path, lang)
 
-  window.$i18n = new I18n(options.language, options.default)
+  I18n.setup(options.language, options.default)
+
+I18n.setup = (locale, defaultLocale) ->
+  window.$i18n = new I18n(locale, defaultLocale)
 
 # export I18n object to the world!
 window.I18n = I18n

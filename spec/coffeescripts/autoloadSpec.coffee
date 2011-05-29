@@ -83,3 +83,17 @@ describe "I18n as autoload capable", ->
       expect($i18n.t("another")).toEqual("aaa")
       expect($i18n.t("hello")).toEqual("mondo")
     )
+
+  it "should autoload and call setup", ->
+    setupSpy = spyOn(I18n, "setup")
+    I18n.autoloadAndSetup(path: "/fixtures/loc1", language: "it", default: "en")
+    expect(setupSpy.mostRecentCall.args).toEqual(["it", "en"])
+
+  it "should setup a new instance", ->
+    I18n.load("/fixtures/loc1", "it")
+    I18n.load("/fixtures/loc1", "en")
+    waitLanguageLoaded("it", ->
+      I18n.setup("it", "en")
+      expect($i18n.t("another")).toEqual("aaa")
+      expect($i18n.t("hello")).toEqual("mondo")
+    )
