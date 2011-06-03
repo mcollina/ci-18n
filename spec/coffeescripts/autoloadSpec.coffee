@@ -97,3 +97,26 @@ describe "I18n as autoload capable", ->
       expect($i18n.t("another")).toEqual("aaa")
       expect($i18n.t("hello")).toEqual("mondo")
     )
+
+  it "should autosetup calling detectLanguage with window.navigator", ->
+    detectSpy = spyOn(I18n, "detectLanguage").andReturn("en")
+    I18n.autosetup()
+    expect(detectSpy.mostRecentCall.args).toEqual([window.navigator])
+
+  it "should autosetup calling setup", ->
+    detectSpy = spyOn(I18n, "detectLanguage").andReturn("en")
+    setupSpy = spyOn(I18n, "setup")
+    I18n.autosetup()
+    expect(setupSpy.mostRecentCall.args).toEqual(["en", undefined])
+
+  it "should autosetup calling setup with a default language", ->
+    detectSpy = spyOn(I18n, "detectLanguage").andReturn("en")
+    setupSpy = spyOn(I18n, "setup")
+    I18n.autosetup("it")
+    expect(setupSpy.mostRecentCall.args).toEqual(["en", "it"])
+
+  it "should autosetup calling setup with a default language (disambiguation)", ->
+    detectSpy = spyOn(I18n, "detectLanguage").andReturn("it")
+    setupSpy = spyOn(I18n, "setup")
+    I18n.autosetup("en")
+    expect(setupSpy.mostRecentCall.args).toEqual(["it", "en"])

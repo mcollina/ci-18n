@@ -32,7 +32,6 @@ class I18n
 
   translate: (keywordList, options = {}) ->
     keywordList = I18n.normalizeKeys(keywordList, options)
-    console.log(this.locale)
     lookup = innerLookup(this.locale(), keywordList) || options.default || innerLookup(this.defaultLocale(), keywordList)
 
     # the scope is used by normalizeKeys, but it will be 
@@ -212,6 +211,10 @@ I18n.autoloadAndSetup = (options) ->
 
 I18n.setup = (locale, defaultLocale) ->
   window.$i18n = new I18n(locale, defaultLocale)
+
+I18n.autosetup = (defaultLocale) ->
+  locale = I18n.detectLanguage(window.navigator)
+  I18n.setup(locale, defaultLocale)
 
 # export I18n object to the world!
 window.I18n = I18n
