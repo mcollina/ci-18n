@@ -99,6 +99,7 @@ or if you want to localize just a date:
 TODO
 ----
 
+* Testing on all major browser.
 * Add some documentation.
 * More documentation.
 * Examples.
