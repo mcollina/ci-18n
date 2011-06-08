@@ -1,13 +1,7 @@
 
-require 'bundler/setup'
-
-begin
-  require 'jasmine'
-  load 'jasmine/tasks/jasmine.rake'
-rescue
-  puts "Unable to load jasmine gem"
-  puts "  run bundle install"
-end
+require 'active_support/concern'
+require 'jasmine'
+load 'jasmine/tasks/jasmine.rake'
 require 'rake/minify'
 
 Rake::Minify.new do
