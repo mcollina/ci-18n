@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{ci-18n}
-  s.version = "0.0.0"
+  s.version = "0.0.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Matteo Collina"]
@@ -22,6 +22,8 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION",
     "build/.gitkeep",
+    "build/ci-18n.js",
+    "build/ci-18n.min.js",
     "ci-18n.gemspec",
     "coffeescripts/I18n.coffee",
     "javascripts/sprintf-0.7-beta1.js",
