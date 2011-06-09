@@ -112,6 +112,8 @@ TODO
   translations.
 * Simplify autoloading.
 * Clean up the development environment.
+* Add pluralization support?
+* Add transliteration support.
 
 Development Environment
 ------
