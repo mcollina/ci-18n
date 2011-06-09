@@ -86,12 +86,15 @@ Really, if you are familiar with the ruby [I18n][i18n] library, it just works
 the same. 
 
 You can translate with:
+
     $i18n.t("hello.world")
 
 If you want to localize a datetime:
+
     $i18n.l(new Date(), format: "default", type: "datetime")
 
 or if you want to localize just a date:
+
     $i18n.l(new Date(), format: "default", type: "date")
 
 [i18n]: https://github.com/svenfuchs/i18n
